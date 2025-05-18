@@ -1,4 +1,6 @@
 import gspread
+import os
+print("🧠 GITHUB_EVENT_NAME:", os.getenv("GITHUB_EVENT_NAME"))
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from google.oauth2.service_account import Credentials
