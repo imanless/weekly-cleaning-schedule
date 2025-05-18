@@ -2,7 +2,7 @@ name: Weekly Cleaning Schedule
 
 on:
   schedule:
-    - cron: "*/1 * * * *" # Runs every Sunday at 22:00 UTC (Monday 00:00 CET)
+    - cron: "10 22 * * 0" # Runs every Sunday at 22:00 UTC = Monday 00:10 Germany time
   workflow_dispatch: # Allows manual trigger
 
 jobs:
