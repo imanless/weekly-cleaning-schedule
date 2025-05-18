@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 from google.oauth2.service_account import Credentials
 from google.auth.transport.requests import AuthorizedSession
 import random
-
+print("🕒 Current datetime:", datetime.now())
 # Setup
 scope = [
     "https://spreadsheets.google.com/feeds",
