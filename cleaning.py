@@ -1,5 +1,6 @@
 import gspread
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from google.oauth2.service_account import Credentials
 from google.auth.transport.requests import AuthorizedSession
 import random
@@ -40,8 +41,9 @@ for sheet in spreadsheet.worksheets():
         except ValueError:
             continue
  # Use current week's Monday as the anchor date
-#simulated_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
-simulated_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+#simulated_start = datetime
+# .today().replace(hour=0, minute=0, second=0, microsecond=0)
+simulated_start = datetime.now(ZoneInfo("Europe/Berlin")).replace(hour=0, minute=0, second=0, microsecond=0)
 monday_of_this_week = simulated_start - timedelta(days=simulated_start.weekday())
 test_date = monday_of_this_week
 week_name = f"Week of {test_date.strftime('%Y-%m-%d')} — Current Week"
