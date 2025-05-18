@@ -2,7 +2,8 @@ name: Weekly Cleaning Schedule
 
 on:
   schedule:
-    - cron: "*/3 * * * *"  # every 5 minutes # Allow manual trigger
+    - cron: "*/3 * * * *"  # every 5 minutes 
+  workflow_dispatch:
 
 jobs:
   run-script:
