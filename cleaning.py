@@ -36,7 +36,31 @@ logging.info("Opening Google Spreadsheet: cleaning_test")
 spreadsheet = client.open("cleaning_test")
 
 # Ensure Meta sheet exists for persistent metadata
-meta_sheet = spreadsheet.worksheet("Meta") if "Meta" in [s.title for s in spreadsheet.worksheets()] else spreadsheet.add_worksheet(title="Meta", rows="10", cols="2")
+if "Meta" in [s.title for s in spreadsheet.worksheets()]:
+    meta_sheet = spreadsheet.worksheet("Meta")
+else:
+    meta_sheet = spreadsheet.add_worksheet(title="Meta", rows="30", cols="5")
+
+# Ensure Meta sheet has enough rows and columns in case it already existed with limited size
+meta_sheet.resize(rows=30, cols=5)
+
+# Ensure each task has an initial assigned room in Meta
+task_start_rooms = {
+    "Vaccum and Floor Cleaned": "Room 2",
+    "Stove and Counter Top": "Room 3",
+    "Tables Cleaned (other surfaces)": "Room 4",
+    "Oven - Microwave": "Room 5",
+    "Empty Trash Bins": "Room 6"
+}
+
+for i, (task, default_room) in enumerate(task_start_rooms.items()):
+    try:
+        if not meta_sheet.acell(f"A{12 + i}").value:
+            meta_sheet.update(f"A{12 + i}", [[task]])
+            meta_sheet.update(f"B{12 + i}", [[default_room]])
+    except:
+        meta_sheet.update(f"A{12 + i}", [[task]])
+        meta_sheet.update(f"B{12 + i}", [[default_room]])
 
 try:
     if not meta_sheet.hidden:
@@ -76,11 +100,11 @@ for sheet in spreadsheet.worksheets():
         except ValueError:
             continue
  # Use current week's Monday as the anchor date
-#simulated_start = datetime
+#imulated_start = datetime
 
 simulated_start = datetime.now (ZoneInfo("Europe/Berlin")).replace(hour=0, minute=0, second=0, microsecond=0)
 
-#simulated_start = datetime(2025, 6, 24).replace(hour=0, minute=0, second=0, microsecond=0)
+#simulated_start = datetime(2025, 6, 30).replace(hour=0, minute=0, second=0, microsecond=0)
 logging.info(f"Simulated start date set to: {simulated_start}")
 monday_of_this_week = simulated_start - timedelta(days=simulated_start.weekday())
 test_date = monday_of_this_week
@@ -212,13 +236,25 @@ logging.info(f"Bathroom rotation index: {bathroom_rotation_index}")
 logging.info(f"Bathroom assigned to: {bathroom_room}")
 
  # Assign bathroom task to the bathroom_room
-# Assign other tasks randomly to remaining rooms
+# Assign other tasks with forward-rotation logic
 other_rooms = [room for room in rooms if room != bathroom_room]
 
-random.shuffle(tasks)
-# Create a dictionary of room to task
-assignment_dict = dict(zip(other_rooms, tasks))
-assignment_dict[bathroom_room] = bathroom_task
+# Determine next room assignment for each task (rotating forward, skipping bathroom)
+room_cycle = rooms.copy()
+assignment_dict = {bathroom_room: bathroom_task}
+
+for i in range(12, 12 + len(tasks)):
+    task = meta_sheet.acell(f"A{i}").value
+    current_room = meta_sheet.acell(f"B{i}").value
+    current_index = room_cycle.index(current_room)
+    # Rotate forward by one, skip bathroom if necessary
+    for step in range(1, len(room_cycle)):
+        next_index = (current_index + step) % len(room_cycle)
+        next_room = room_cycle[next_index]
+        if next_room != bathroom_room and next_room not in assignment_dict:
+            assignment_dict[next_room] = task
+            meta_sheet.update(f"B{i}", [[next_room]])
+            break
 
 # Update bathroom index in meta sheet
 meta_sheet.update("A1", [[str((bathroom_rotation_index + 1) % len(bathroom_room_sequence))]])
