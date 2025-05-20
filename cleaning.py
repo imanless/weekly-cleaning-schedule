@@ -78,9 +78,9 @@ for sheet in spreadsheet.worksheets():
  # Use current week's Monday as the anchor date
 #simulated_start = datetime
 
-#simulated_start = datetime.now (ZoneInfo("Europe/Berlin")).replace(hour=0, minute=0, second=0, microsecond=0)
+simulated_start = datetime.now (ZoneInfo("Europe/Berlin")).replace(hour=0, minute=0, second=0, microsecond=0)
 
-simulated_start = datetime(2025, 6, 24).replace(hour=0, minute=0, second=0, microsecond=0)
+#simulated_start = datetime(2025, 6, 24).replace(hour=0, minute=0, second=0, microsecond=0)
 logging.info(f"Simulated start date set to: {simulated_start}")
 monday_of_this_week = simulated_start - timedelta(days=simulated_start.weekday())
 test_date = monday_of_this_week
