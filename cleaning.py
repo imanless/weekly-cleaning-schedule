@@ -38,6 +38,19 @@ spreadsheet = client.open("cleaning_test")
 # Ensure Meta sheet exists for persistent metadata
 meta_sheet = spreadsheet.worksheet("Meta") if "Meta" in [s.title for s in spreadsheet.worksheets()] else spreadsheet.add_worksheet(title="Meta", rows="10", cols="2")
 
+try:
+    if not meta_sheet.hidden:
+        meta_sheet.hide()
+        logging.info("Meta sheet successfully hidden after creation.")
+    else:
+        logging.info("Meta sheet was already hidden.")
+except AttributeError:
+    # If hidden attribute doesn't exist, always try to hide and log result
+    try:
+        meta_sheet.hide()
+        logging.info("Meta sheet hidden (attribute not available to check status).")
+    except Exception as e:
+        logging.warning(f"Could not hide Meta sheet: {e}")
 
 
 # --- Remove existing "Current Week" and "Previous Week" tabs if they exist (move deletion after renaming) ---
