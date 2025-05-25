@@ -206,7 +206,7 @@ for sheet in spreadsheet.worksheets():
     if sheet.title.startswith("Week of "):
         try:
             date_part = sheet.title.replace("Week of ", "").split()[0]
-            sheet_date = datetime.strptime(date_part, "%Y-%m-%d")
+            sheet_date = datetime.strptime(date_part, "%Y-%m-%d").replace(tzinfo=ZoneInfo("Europe/Berlin"))
             if (test_date - sheet_date).days > 7:
                 remove_all_protections(sheet, spreadsheet.id, authed_session)
                 spreadsheet.del_worksheet(sheet)
